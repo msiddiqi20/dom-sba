@@ -63,9 +63,71 @@ function createNavBar(navLogo, navItems) {
 
 createNavBar(navLogo, navItems);
 
+document.body.insertBefore(
+  document.createElement("section"),
+  document.querySelector("script")
+);
+
+document.querySelector("section").innerHTML = `
+<div class="px-4 py-5 my-5 text-center">
+<img
+  class="img-flex mx-auto mb-4 d-none d-sm-block"
+  src="pictures/Potential.svg"
+  alt="To Do something"
+  width="500"
+/>
+<h1 class="display-3 fw-bold text-body-emphasis text-center">The best to do app...</h1>
+<div class="col-lg-6 mx-auto">
+  <p class="lead mb-4">
+    Write soemthing cool here...
+  </p>
+</div>
+</div>
+`;
+
+document.body.insertBefore(
+  document.createElement("section"),
+  document.querySelector("script")
+);
+
+const sections = document.querySelectorAll("section");
+
+sections[1].classList.add("main", "px-4", "py-5", "my-5");
+sections[1].style.backgroundColor = "#042d6b";
+sections[1].appendChild(document.createElement("div"));
+sections[1].firstChild.classList.add(
+  "jumbotron",
+  "container",
+  "col-10",
+  "col-sm-8",
+  "py-3",
+  "text-center"
+);
+
+const jumbotron = document.querySelector(".jumbotron");
+jumbotron.style.backgroundColor = "white";
+jumbotron.style.borderRadius = "5px";
+jumbotron.innerHTML = `
+<h2 class="display-5 fw-bold">App Name Here...</h2>
+<div id="mainContent">
+  <p>Prompt...</p>
+  <div class="container col-8">
+    <form>
+      <div class="col-auto">
+        <label for="listName" class="visually-hidden">Password</label>
+        <input type="text" class="form-control" id="listName" placeholder="List Name...">
+      </div>
+      <div class="col-auto">
+        <button id="Create" class="btn btn-primary mt-3">Create</button>
+      </div>
+    </form>
+  </div>
+`;
+
+listNameInput = document.getElementById("listName");
+
 function setAllAttributes(element, allAttributes) {
   for (let attribute in allAttributes) {
-    console.log(allAttributes.attribute);
     element.setAttribute(attribute, allAttributes[attribute]);
   }
 }
