@@ -114,17 +114,38 @@ jumbotron.innerHTML = `
   <div class="container col-8">
     <form>
       <div class="col-auto">
-        <label for="listName" class="visually-hidden">Password</label>
-        <input type="text" class="form-control" id="listName" placeholder="List Name...">
+        <label for="listName" class="visually-hidden">List Name</label>
+        <input type="text" class="form-control form-control-lg" id="listName" placeholder="List Name...">
       </div>
       <div class="col-auto">
-        <button id="Create" class="btn btn-primary mt-3">Create</button>
+        <button id="create" class="btn btn-primary btn-lg mt-3">Create</button>
       </div>
     </form>
   </div>
+</div>
 `;
 
-listNameInput = document.getElementById("listName");
+const listNameInput = document.getElementById("listName");
+const createButton = document.getElementById("create");
+
+createButton.addEventListener("click", (event) => {
+  jumbotron.innerHTML = `
+  <h3 class="display-6 fw-bold">${listNameInput.value}</h3>
+  <div id="mainContent">
+    <p>Prompt...</p>
+    <div class="">
+      <form class="d-flex flex-row justify-content-center">
+        <div class="col-6">
+          <input type="text" class="form-control form-control-lg" id="itemName" placeholder="Add item...">
+        </div>
+        <div class="">
+          <button id="add" class="btn btn-primary btn-lg">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  `;
+});
 
 function setAllAttributes(element, allAttributes) {
   for (let attribute in allAttributes) {
