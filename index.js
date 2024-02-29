@@ -128,27 +128,76 @@ jumbotron.innerHTML = `
 const listNameInput = document.getElementById("listName");
 const createButton = document.getElementById("create");
 
+const listArray = [];
+
 createButton.addEventListener("click", (event) => {
+  event.preventDefault();
   jumbotron.innerHTML = `
   <h3 class="display-6 fw-bold">${listNameInput.value}</h3>
   <div id="mainContent">
     <p>Prompt...</p>
-    <div class="">
+    <div>
       <form class="d-flex flex-row justify-content-center">
         <div class="col-6">
           <input type="text" class="form-control form-control-lg" id="itemName" placeholder="Add item...">
         </div>
-        <div class="">
-          <button id="add" class="btn btn-primary btn-lg">Add</button>
+        <div>
+          <button id="add" class="btn btn-primary btn-lg mx-2">Add</button>
         </div>
       </form>
     </div>
+    <ul id="itemList" class="list-group my-3">
+    </ul>
   </div>
   `;
+
+  const itemNameInput = document.getElementById("itemName");
+  const addButton = document.getElementById("add");
+  const list = document.getElementById("itemList");
+
+  enableAdd(itemNameInput, addButton, list);
+  enableActiveListItem(list);
 });
 
 function setAllAttributes(element, allAttributes) {
   for (let attribute in allAttributes) {
     element.setAttribute(attribute, allAttributes[attribute]);
+  }
+}
+
+function enableAdd(input, button, list) {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (!input.value == "") {
+      let li = document.createElement("li");
+      li.classList.add("list-group-item");
+      li.textContent = input.value;
+      input.value = "";
+
+      listArray.push(li);
+      li.id = listArray.length - 1;
+      list.appendChild(li);
+      console.log(li);
+    }
+  });
+}
+
+function enableActiveListItem(ul) {
+  ul.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (event.target.tagName.toLowerCase() == "li") {
+      event.target.classList.add("active");
+      singleActive(ul, event.target.id);
+    }
+  });
+}
+
+function singleActive(ul, id) {
+  const allListItems = ul.children;
+
+  for (let item of allListItems) {
+    if (item.id != id) {
+      item.classList.remove("active");
+    }
   }
 }
