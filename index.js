@@ -93,7 +93,7 @@ document.body.insertBefore(
 const sections = document.querySelectorAll("section");
 
 sections[1].classList.add("main", "px-4", "py-5", "my-5");
-sections[1].style.backgroundColor = "#042d6b";
+sections[1].style.backgroundColor = "#48a4d8";
 sections[1].appendChild(document.createElement("div"));
 sections[1].firstChild.classList.add(
   "jumbotron",
@@ -106,6 +106,8 @@ sections[1].firstChild.classList.add(
 
 const jumbotron = document.querySelector(".jumbotron");
 jumbotron.style.backgroundColor = "white";
+jumbotron.style.boxShadow =
+  "rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px";
 jumbotron.style.borderRadius = "5px";
 jumbotron.innerHTML = `
 <h2 class="display-5 fw-bold">App Name Here...</h2>
@@ -142,11 +144,11 @@ createButton.addEventListener("click", (event) => {
           <input type="text" class="form-control form-control-lg" id="itemName" placeholder="Add item...">
         </div>
         <div>
-          <button id="add" class="btn btn-primary btn-lg mx-2">Add</button>
+          <button id="add" class="btn btn-dark btn-lg mx-2">Add</button>
         </div>
       </form>
     </div>
-    <ul id="itemList" class="list-group my-3">
+    <ul id="itemList" class="list-group-flush mt-5">
     </ul>
   </div>
   `;
@@ -169,15 +171,48 @@ function enableAdd(input, button, list) {
   button.addEventListener("click", (event) => {
     event.preventDefault();
     if (!input.value == "") {
+      let listDiv = document.createElement("div");
+      listDiv.classList.add(
+        "d-flex",
+        "flex-row",
+        "justify-content-center",
+        "my-2"
+      );
+
       let li = document.createElement("li");
-      li.classList.add("list-group-item");
       li.textContent = input.value;
       input.value = "";
-
+      li.classList.add("list-group-item", "col-8", "text-start");
+      li.style.fontSize = "25px";
       listArray.push(li);
       li.id = listArray.length - 1;
-      list.appendChild(li);
-      console.log(li);
+      listDiv.id = `Div${li.id}`;
+      listDiv.appendChild(li);
+
+      let checkButton = document.createElement("a");
+      checkButton.href = "";
+      checkButton.id = `CheckBtn${li.id}`;
+      checkButton.innerHTML = `
+      <i
+      class="material-symbols-outlined"
+      style=" font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48; font-size: 35px; color: green;">
+      check_circle
+      </i>
+      `;
+      listDiv.appendChild(checkButton);
+
+      let deleteButton = document.createElement("a");
+      deleteButton.href = "";
+      deleteButton.id = `DeleteBtn${li.id}`;
+      deleteButton.innerHTML = `
+      <i
+      class="material-symbols-outlined"
+      style=" font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48; font-size: 35px; color: red;">
+      cancel
+      </i>
+      `;
+      listDiv.appendChild(deleteButton);
+      list.appendChild(listDiv);
     }
   });
 }
@@ -187,13 +222,14 @@ function enableActiveListItem(ul) {
     event.preventDefault();
     if (event.target.tagName.toLowerCase() == "li") {
       event.target.classList.add("active");
-      singleActive(ul, event.target.id);
+      console.log(event.target.id);
+      singleActive(event.target.id);
     }
   });
 }
 
-function singleActive(ul, id) {
-  const allListItems = ul.children;
+function singleActive(id) {
+  const allListItems = document.querySelectorAll("#itemList li");
 
   for (let item of allListItems) {
     if (item.id != id) {
@@ -201,3 +237,12 @@ function singleActive(ul, id) {
     }
   }
 }
+
+function enableDone(id) {
+  document.getElementById(id).addEventListener("click", (event) => {
+    event.preventDefault();
+    const listID = id.match("/d+/");
+  });
+}
+
+function enableDelete() {}
