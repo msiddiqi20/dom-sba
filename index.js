@@ -136,7 +136,7 @@ createButton.addEventListener("click", (event) => {
   event.preventDefault();
   jumbotron.innerHTML = `
   <h3 class="display-6 fw-bold">${listNameInput.value}</h3>
-  <div id="mainContent">
+  <div id="mainContent" class="row justify-content-center">
     <p>Prompt...</p>
     <div>
       <form class="d-flex flex-row justify-content-center">
@@ -148,7 +148,7 @@ createButton.addEventListener("click", (event) => {
         </div>
       </form>
     </div>
-    <ul id="itemList" class="list-group-flush mt-5">
+    <ul id="itemList" class="list-group-flush mt-5 px-0 col-10" style="">
     </ul>
   </div>
   `;
@@ -158,7 +158,6 @@ createButton.addEventListener("click", (event) => {
   const list = document.getElementById("itemList");
 
   enableAdd(itemNameInput, addButton, list);
-  enableActiveListItem(list);
 });
 
 function setAllAttributes(element, allAttributes) {
@@ -176,32 +175,35 @@ function enableAdd(input, button, list) {
         "d-flex",
         "flex-row",
         "justify-content-center",
-        "my-2"
+        "rounded",
+        "px-2"
       );
 
       let li = document.createElement("li");
       li.textContent = input.value;
       input.value = "";
-      li.classList.add("list-group-item", "col-8", "text-start");
-      li.style.fontSize = "25px";
+      li.classList.add("list-group-item", "col-8", "text-start", "flex-grow-1");
+      li.style.fontSize = "27.5px";
       listArray.push(li);
       li.id = listArray.length - 1;
       listDiv.id = `Div${li.id}`;
       listDiv.appendChild(li);
 
-      let checkButton = document.createElement("a");
-      checkButton.href = "";
-      checkButton.id = `CheckBtn${li.id}`;
-      checkButton.innerHTML = `
+      let editButton = document.createElement("a");
+      editButton.classList.add("mt-1");
+      editButton.href = "";
+      editButton.id = `EditBtn${li.id}`;
+      editButton.innerHTML = `
       <i
       class="material-symbols-outlined"
-      style=" font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48; font-size: 35px; color: green;">
-      check_circle
+      style=" font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48; font-size: 35px; color: #ffc008;">
+      pending
       </i>
       `;
-      listDiv.appendChild(checkButton);
+      listDiv.appendChild(editButton);
 
       let deleteButton = document.createElement("a");
+      deleteButton.classList.add("mt-1");
       deleteButton.href = "";
       deleteButton.id = `DeleteBtn${li.id}`;
       deleteButton.innerHTML = `
@@ -213,36 +215,33 @@ function enableAdd(input, button, list) {
       `;
       listDiv.appendChild(deleteButton);
       list.appendChild(listDiv);
+
+      enableDone(li.id);
+      enableDelete(li.id);
     }
   });
-}
-
-function enableActiveListItem(ul) {
-  ul.addEventListener("click", (event) => {
-    event.preventDefault();
-    if (event.target.tagName.toLowerCase() == "li") {
-      event.target.classList.add("active");
-      console.log(event.target.id);
-      singleActive(event.target.id);
-    }
-  });
-}
-
-function singleActive(id) {
-  const allListItems = document.querySelectorAll("#itemList li");
-
-  for (let item of allListItems) {
-    if (item.id != id) {
-      item.classList.remove("active");
-    }
-  }
 }
 
 function enableDone(id) {
-  document.getElementById(id).addEventListener("click", (event) => {
+  document.getElementById(`EditBtn${id}`).addEventListener("click", (event) => {
     event.preventDefault();
-    const listID = id.match("/d+/");
   });
 }
 
-function enableDelete() {}
+function enableDelete(id) {
+  document
+    .getElementById(`DeleteBtn${id}`)
+    .addEventListener("click", (event) => {
+      event.preventDefault();
+
+      if (window.confirm("Do you want to delete this item?")) {
+        let divRemove = document.getElementById(`Div${id}`);
+
+        divRemove.addEventListener("animationend", (event) => {
+          event.preventDefault();
+          divRemove.remove();
+        });
+        divRemove.classList.add("animate__animated", "animate__bounceOut");
+      }
+    });
+}
