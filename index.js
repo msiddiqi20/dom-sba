@@ -6,14 +6,14 @@ navBar
   .appendChild(document.createElement("div"))
   .classList.add("container-fluid");
 
-navLogo = {
+const navLogo = {
   src: "pictures/ToDoIcon.png",
   alt: "To Do Icon",
   href: "index.html",
   text: "Check-Check",
 };
 
-navItems = [
+const navItems = [
   { text: "Sign In", href: "#" },
   { text: "Sign Out", href: "#" },
 ];
@@ -21,16 +21,15 @@ navItems = [
 function createNavBar(navLogo, navItems) {
   const navBarDiv = document.querySelector("div");
 
-  navBarDiv.appendChild(document.createElement("a"));
-  logoAnchor = document.querySelector("a");
+  const logoAnchor = document.createElement("a");
   logoAnchor.href = navLogo.href;
   logoAnchor.classList.add("navbar-brand");
-
   logoAnchor.innerHTML = `<img src="${navLogo.src}" alt="${navLogo.alt}" width="35"
   class="d-inline-block align-text-bottom mx-2">${navLogo.text}`;
+  navBarDiv.appendChild(logoAnchor);
 
-  navBarDiv.appendChild(document.createElement("button"));
-  setAllAttributes(document.querySelector("button"), {
+  const hamburgerMenuButton = document.createElement("button");
+  setAllAttributes(hamburgerMenuButton, {
     class: "navbar-toggler",
     type: "button",
     "data-bs-toggle": "collapse",
@@ -39,36 +38,38 @@ function createNavBar(navLogo, navItems) {
     "aria-expanded": "false",
     "aria-label": "Toggle navigation",
   });
-  document.querySelector(
-    "button"
-  ).innerHTML = `<span class="navbar-toggler-icon"></span>`;
+  hamburgerMenuButton.innerHTML = `<span class="navbar-toggler-icon"></span>`;
+  navBarDiv.appendChild(hamburgerMenuButton);
 
-  navBarDiv
-    .appendChild(document.createElement("div"))
-    .classList.add("collapse", "navbar-collapse");
+  const navBarCollapse = document.createElement("div");
+  navBarCollapse.classList.add("collapse", "navbar-collapse");
+  navBarCollapse.id = "navbarSupportedContent";
+  navBarDiv.appendChild(navBarCollapse);
 
-  navBarDiv.lastChild.id = "navbarSupportedContent";
-
-  navBarDiv.lastChild
-    .appendChild(document.createElement("ul"))
-    .classList.add("navbar-nav", "ms-auto");
+  const navBarUl = document.createElement("ul");
+  navBarUl.classList.add("navbar-nav", "ms-auto");
+  navBarDiv.lastChild.appendChild(navBarUl);
 
   navItems.forEach((item) => {
     let li = document.createElement("li");
     li.classList.add("nav-item");
     li.innerHTML = `<a class="nav-link" href="${item.href}">${item.text}</a>`;
-    navBarDiv.lastChild.firstChild.appendChild(li);
+    navBarUl.appendChild(li);
   });
+}
+
+function setAllAttributes(element, allAttributes) {
+  for (let attribute in allAttributes) {
+    element.setAttribute(attribute, allAttributes[attribute]);
+  }
 }
 
 createNavBar(navLogo, navItems);
 
-document.body.insertBefore(
-  document.createElement("section"),
-  document.querySelector("script")
-);
+const heroSection = document.createElement("section");
+heroSection.id = "hero";
 
-document.querySelector("section").innerHTML = `
+heroSection.innerHTML = `
 <div class="px-4 py-5 my-5 text-center">
 <img
   class="img-flex mx-auto mb-4 d-none d-sm-block"
@@ -85,17 +86,16 @@ document.querySelector("section").innerHTML = `
 </div>
 `;
 
-document.body.insertBefore(
-  document.createElement("section"),
-  document.querySelector("script")
-);
+document.body.insertBefore(heroSection, document.querySelector("script"));
 
-const sections = document.querySelectorAll("section");
+const mainSection = document.createElement("section");
+mainSection.id = "main-section";
+mainSection.classList.add("main", "px-4", "py-5", "my-5");
+mainSection.style.backgroundColor = "#48a4d8";
+document.body.insertBefore(mainSection, document.querySelector("script"));
 
-sections[1].classList.add("main", "px-4", "py-5", "my-5");
-sections[1].style.backgroundColor = "#48a4d8";
-sections[1].appendChild(document.createElement("div"));
-sections[1].firstChild.classList.add(
+const jumbotron = document.createElement("div");
+jumbotron.classList.add(
   "jumbotron",
   "container",
   "col-10",
@@ -103,12 +103,11 @@ sections[1].firstChild.classList.add(
   "py-3",
   "text-center"
 );
-
-const jumbotron = document.querySelector(".jumbotron");
 jumbotron.style.backgroundColor = "white";
 jumbotron.style.boxShadow =
   "rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px";
 jumbotron.style.borderRadius = "5px";
+
 jumbotron.innerHTML = `
 <h2 class="display-5 fw-bold">App Name Here...</h2>
 <div id="mainContent">
@@ -127,15 +126,18 @@ jumbotron.innerHTML = `
 </div>
 `;
 
-const listNameInput = document.getElementById("listName");
+mainSection.appendChild(jumbotron);
+
+const textInput = document.getElementById("listName");
 const createButton = document.getElementById("create");
 
-const listArray = [];
+const liArray = [];
 
 createButton.addEventListener("click", (event) => {
   event.preventDefault();
+
   jumbotron.innerHTML = `
-  <h3 class="display-6 fw-bold">${listNameInput.value}</h3>
+  <h3 class="display-6 fw-bold">${textInput.value}</h3>
   <div id="mainContent" class="row justify-content-center">
     <p>Prompt...</p>
     <div>
@@ -156,15 +158,10 @@ createButton.addEventListener("click", (event) => {
   enableAdd();
 });
 
-function setAllAttributes(element, allAttributes) {
-  for (let attribute in allAttributes) {
-    element.setAttribute(attribute, allAttributes[attribute]);
-  }
-}
-
 function enableAdd() {
   document.getElementById("add").addEventListener("click", (event) => {
     event.preventDefault();
+
     if (!document.getElementById("itemName").value == "") {
       let listDiv = document.createElement("div");
       listDiv.classList.add(
@@ -179,11 +176,13 @@ function enableAdd() {
 
       let li = document.createElement("li");
       li.textContent = document.getElementById("itemName").value;
-      document.getElementById("itemName").value = "";
       li.classList.add("list-group-item", "col-8", "text-start", "flex-grow-1");
       li.style.fontSize = "27.5px";
-      listArray.push(li);
-      li.id = listArray.length - 1;
+      liArray.push(li);
+      li.id = liArray.length - 1;
+
+      document.getElementById("itemName").value = "";
+
       listDiv.id = `Div${li.id}`;
       listDiv.appendChild(li);
 
@@ -191,6 +190,7 @@ function enableAdd() {
       editButton.classList.add("mt-1");
       editButton.href = "";
       editButton.id = `EditBtn${li.id}`;
+
       editButton.innerHTML = `
       <i
       class="material-symbols-outlined"
@@ -198,12 +198,14 @@ function enableAdd() {
       pending
       </i>
       `;
+
       listDiv.appendChild(editButton);
 
       let deleteButton = document.createElement("a");
       deleteButton.classList.add("mt-1");
       deleteButton.href = "";
       deleteButton.id = `DeleteBtn${li.id}`;
+
       deleteButton.innerHTML = `
       <i
       class="material-symbols-outlined"
@@ -211,6 +213,7 @@ function enableAdd() {
       cancel
       </i>
       `;
+
       listDiv.appendChild(deleteButton);
       document.getElementById("itemList").appendChild(listDiv);
 
@@ -224,15 +227,18 @@ function enableAdd() {
 function enableEdit(id) {
   document.getElementById(`EditBtn${id}`).addEventListener("click", (event) => {
     event.preventDefault();
+
     window.alert("You are about to make changes to this item");
+
     let divEdit = document.getElementById(`Div${id}`);
     document.getElementById("itemName").value = divEdit.firstChild.textContent;
+
     let commitEditButton = document.createElement("button");
     commitEditButton.id = "edit";
     commitEditButton.classList.add("btn", "btn-dark", "btn-lg", "mx-2");
     commitEditButton.textContent = "Save";
-    savedAddButton = document.getElementById("add");
 
+    let savedAddButton = document.getElementById("add");
     document.getElementById("add").replaceWith(commitEditButton);
 
     commitEditButton.addEventListener("click", (event) => {
@@ -240,16 +246,28 @@ function enableEdit(id) {
 
       let newValue = document.getElementById("itemName").value;
       document.getElementById("itemName").value = "";
+
       document
         .getElementById(`Div${id}`)
-        .classList.remove("animate__fadeInUp", "animate__bounceOut");
-      document.getElementById(`Div${id}`).classList.add("animate__bounceIn");
+        .classList.remove(
+          "animate__animated",
+          "animate__fadeInUp",
+          "animate__bounceOut"
+        );
+
+      console.log(document.getElementById(`Div${id}`));
+
       document
         .getElementById(`Div${id}`)
         .addEventListener("animationend", (event) => {
+          event.preventDefault();
           document.getElementById(id).textContent = newValue;
           commitEditButton.replaceWith(savedAddButton);
         });
+
+      document
+        .getElementById(`Div${id}`)
+        .classList.add("animate__animated", "animate__bounceIn");
     });
   });
 }
@@ -260,7 +278,11 @@ function enableDelete(id) {
     .addEventListener("click", (event) => {
       event.preventDefault();
 
-      if (window.confirm("Do you want to delete this item?")) {
+      if (document.getElementById("edit")) {
+        window.alert(
+          "You cannot delete an item while editing! Please make changes before deleting."
+        );
+      } else if (window.confirm("Do you want to delete this item?")) {
         let divRemove = document.getElementById(`Div${id}`);
 
         divRemove.addEventListener("animationend", (event) => {
@@ -268,6 +290,7 @@ function enableDelete(id) {
           divRemove.remove();
           enableClearAll();
         });
+
         divRemove.classList.remove("animate__fadeInUp", "animate__bounceIn");
         divRemove.classList.add("animate__bounceOut");
       }
@@ -276,6 +299,7 @@ function enableDelete(id) {
 
 function enableClearAll() {
   const allDivs = document.querySelectorAll("#itemList > div");
+
   if (allDivs.length > 1 && !document.getElementById("clearAllButton")) {
     let clearAllButton = document.createElement("button");
     clearAllButton.textContent = "Clear All";
@@ -285,8 +309,14 @@ function enableClearAll() {
 
     clearAllButton.addEventListener("click", (event) => {
       event.preventDefault();
-      if (window.confirm("Are you sure you want to delete all items?")) {
+
+      if (document.getElementById("edit")) {
+        window.alert(
+          "You cannot delete all items while editing! Please make changes before deleting."
+        );
+      } else if (window.confirm("Are you sure you want to delete all items?")) {
         let ul = document.getElementById("itemList");
+
         ul.addEventListener("animationend", (event) => {
           event.preventDefault();
           ul.remove();
