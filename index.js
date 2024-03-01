@@ -148,16 +148,12 @@ createButton.addEventListener("click", (event) => {
         </div>
       </form>
     </div>
-    <ul id="itemList" class="list-group-flush mt-5 px-0 col-10" style="">
+    <ul id="itemList" class="list-group-flush mt-5 px-0 col-10">
     </ul>
   </div>
   `;
 
-  const itemNameInput = document.getElementById("itemName");
-  const addButton = document.getElementById("add");
-  const list = document.getElementById("itemList");
-
-  enableAdd(itemNameInput, addButton, list);
+  enableAdd();
 });
 
 function setAllAttributes(element, allAttributes) {
@@ -166,10 +162,10 @@ function setAllAttributes(element, allAttributes) {
   }
 }
 
-function enableAdd(input, button, list) {
-  button.addEventListener("click", (event) => {
+function enableAdd() {
+  document.getElementById("add").addEventListener("click", (event) => {
     event.preventDefault();
-    if (!input.value == "") {
+    if (!document.getElementById("itemName").value == "") {
       let listDiv = document.createElement("div");
       listDiv.classList.add(
         "d-flex",
@@ -182,8 +178,8 @@ function enableAdd(input, button, list) {
       );
 
       let li = document.createElement("li");
-      li.textContent = input.value;
-      input.value = "";
+      li.textContent = document.getElementById("itemName").value;
+      document.getElementById("itemName").value = "";
       li.classList.add("list-group-item", "col-8", "text-start", "flex-grow-1");
       li.style.fontSize = "27.5px";
       listArray.push(li);
@@ -216,11 +212,11 @@ function enableAdd(input, button, list) {
       </i>
       `;
       listDiv.appendChild(deleteButton);
-      list.appendChild(listDiv);
+      document.getElementById("itemList").appendChild(listDiv);
 
       enableEdit(li.id);
       enableDelete(li.id);
-      clearAll();
+      enableClearAll();
     }
   });
 }
@@ -270,7 +266,7 @@ function enableDelete(id) {
         divRemove.addEventListener("animationend", (event) => {
           event.preventDefault();
           divRemove.remove();
-          clearAll();
+          enableClearAll();
         });
         divRemove.classList.remove("animate__fadeInUp", "animate__bounceIn");
         divRemove.classList.add("animate__bounceOut");
@@ -278,7 +274,7 @@ function enableDelete(id) {
     });
 }
 
-function clearAll() {
+function enableClearAll() {
   const allDivs = document.querySelectorAll("#itemList > div");
   if (allDivs.length > 1 && !document.getElementById("clearAllButton")) {
     let clearAllButton = document.createElement("button");
@@ -290,10 +286,18 @@ function clearAll() {
     clearAllButton.addEventListener("click", (event) => {
       event.preventDefault();
       if (window.confirm("Are you sure you want to delete all items?")) {
-        for (let div of document.querySelectorAll("#itemList > div")) {
-          div.remove();
-        }
-        clearAllButton.classList.add("d-none");
+        let ul = document.getElementById("itemList");
+        ul.addEventListener("animationend", (event) => {
+          event.preventDefault();
+          ul.remove();
+          ul = document.createElement("ul");
+          ul.id = "itemList";
+          ul.classList.add("list-group-flush", "mt-5", "px-0", "col-10");
+          document.getElementById("mainContent").appendChild(ul);
+          clearAllButton.classList.add("d-none");
+        });
+
+        ul.classList.add("animate__animated", "animate__fadeOutUp");
       }
     });
   } else if (allDivs.length > 1) {
@@ -302,6 +306,5 @@ function clearAll() {
   } else if (allDivs.length < 1 && document.getElementById("clearAllButton")) {
     let clearAllButton = document.getElementById("clearAllButton");
     clearAllButton.classList.add("d-none");
-  } else {
   }
 }
