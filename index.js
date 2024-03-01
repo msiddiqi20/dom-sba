@@ -176,7 +176,9 @@ function enableAdd(input, button, list) {
         "flex-row",
         "justify-content-center",
         "rounded",
-        "px-2"
+        "px-2",
+        "animate__animated",
+        "animate__fadeInUp"
       );
 
       let li = document.createElement("li");
@@ -216,15 +218,43 @@ function enableAdd(input, button, list) {
       listDiv.appendChild(deleteButton);
       list.appendChild(listDiv);
 
-      enableDone(li.id);
+      enableEdit(li.id);
       enableDelete(li.id);
+      clearAll();
     }
   });
 }
 
-function enableDone(id) {
+function enableEdit(id) {
   document.getElementById(`EditBtn${id}`).addEventListener("click", (event) => {
     event.preventDefault();
+    window.alert("You are about to make changes to this item");
+    let divEdit = document.getElementById(`Div${id}`);
+    document.getElementById("itemName").value = divEdit.firstChild.textContent;
+    let commitEditButton = document.createElement("button");
+    commitEditButton.id = "edit";
+    commitEditButton.classList.add("btn", "btn-dark", "btn-lg", "mx-2");
+    commitEditButton.textContent = "Save";
+    savedAddButton = document.getElementById("add");
+
+    document.getElementById("add").replaceWith(commitEditButton);
+
+    commitEditButton.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      let newValue = document.getElementById("itemName").value;
+      document.getElementById("itemName").value = "";
+      document
+        .getElementById(`Div${id}`)
+        .classList.remove("animate__fadeInUp", "animate__bounceOut");
+      document.getElementById(`Div${id}`).classList.add("animate__bounceIn");
+      document
+        .getElementById(`Div${id}`)
+        .addEventListener("animationend", (event) => {
+          document.getElementById(id).textContent = newValue;
+          commitEditButton.replaceWith(savedAddButton);
+        });
+    });
   });
 }
 
@@ -240,8 +270,35 @@ function enableDelete(id) {
         divRemove.addEventListener("animationend", (event) => {
           event.preventDefault();
           divRemove.remove();
+          clearAll();
         });
-        divRemove.classList.add("animate__animated", "animate__bounceOut");
+        divRemove.classList.remove("animate__fadeInUp", "animate__bounceIn");
+        divRemove.classList.add("animate__bounceOut");
       }
     });
+}
+
+function clearAll() {
+  const allDivs = document.querySelectorAll("#itemList > div");
+  if (allDivs.length > 1 && !document.getElementById("clearAllButton")) {
+    let clearAllButton = document.createElement("button");
+    clearAllButton.textContent = "Clear All";
+    clearAllButton.classList.add("btn", "btn-danger", "btn-lg", "mx-2");
+    clearAllButton.id = "clearAllButton";
+    let jumbo = document
+      .querySelector(".jumbotron")
+      .appendChild(clearAllButton);
+
+    clearAllButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      console.log(1);
+    });
+  } else if (allDivs.length > 1) {
+    let clearAllButton = document.getElementById("clearAllButton");
+    clearAllButton.classList.remove("d-none");
+  } else if (allDivs.length < 1 && document.getElementById("clearAllButton")) {
+    let clearAllButton = document.getElementById("clearAllButton");
+    clearAllButton.classList.add("d-none");
+  } else {
+  }
 }
