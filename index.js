@@ -285,13 +285,16 @@ function clearAll() {
     clearAllButton.textContent = "Clear All";
     clearAllButton.classList.add("btn", "btn-danger", "btn-lg", "mx-2");
     clearAllButton.id = "clearAllButton";
-    let jumbo = document
-      .querySelector(".jumbotron")
-      .appendChild(clearAllButton);
+    document.querySelector(".jumbotron").appendChild(clearAllButton);
 
     clearAllButton.addEventListener("click", (event) => {
       event.preventDefault();
-      console.log(1);
+      if (window.confirm("Are you sure you want to delete all items?")) {
+        for (let div of document.querySelectorAll("#itemList > div")) {
+          div.remove();
+        }
+        clearAllButton.classList.add("d-none");
+      }
     });
   } else if (allDivs.length > 1) {
     let clearAllButton = document.getElementById("clearAllButton");
