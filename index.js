@@ -228,47 +228,62 @@ function enableEdit(id) {
   document.getElementById(`EditBtn${id}`).addEventListener("click", (event) => {
     event.preventDefault();
 
-    window.alert("You are about to make changes to this item");
+    if (!document.getElementById("edit")) {
+      window.alert("You are about to make changes to this item");
 
-    let divEdit = document.getElementById(`Div${id}`);
-    document.getElementById("itemName").value = divEdit.firstChild.textContent;
+      let divEdit = document.getElementById(`Div${id}`);
+      document.getElementById("itemName").value =
+        divEdit.firstChild.textContent;
 
-    let commitEditButton = document.createElement("button");
-    commitEditButton.id = "edit";
-    commitEditButton.classList.add("btn", "btn-dark", "btn-lg", "mx-2");
-    commitEditButton.textContent = "Save";
+      let commitEditButton = document.createElement("button");
+      commitEditButton.id = "edit";
+      commitEditButton.classList.add("btn", "btn-dark", "btn-lg", "mx-2");
+      commitEditButton.textContent = "Save";
 
-    let savedAddButton = document.getElementById("add");
-    document.getElementById("add").replaceWith(commitEditButton);
+      let savedAddButton = document.getElementById("add");
+      document.getElementById("add").replaceWith(commitEditButton);
 
-    commitEditButton.addEventListener("click", (event) => {
-      event.preventDefault();
-
-      let newValue = document.getElementById("itemName").value;
-      document.getElementById("itemName").value = "";
-
-      document
-        .getElementById(`Div${id}`)
-        .classList.remove(
-          "animate__animated",
-          "animate__fadeInUp",
-          "animate__bounceOut"
-        );
-
-      console.log(document.getElementById(`Div${id}`));
-
-      document
-        .getElementById(`Div${id}`)
-        .addEventListener("animationend", (event) => {
+      function addCommitEditEL(id) {
+        commitEditButton.addEventListener("click", (event) => {
           event.preventDefault();
-          document.getElementById(id).textContent = newValue;
-          commitEditButton.replaceWith(savedAddButton);
-        });
+          id = parseInt(id);
 
-      document
-        .getElementById(`Div${id}`)
-        .classList.add("animate__animated", "animate__bounceIn");
-    });
+          let newValue = document.getElementById("itemName").value;
+          document.getElementById("itemName").value = "";
+
+          document
+            .getElementById(`Div${id}`)
+            .classList.remove("animate__fadeInUp", "animate__bounceOut");
+
+          document
+            .getElementById(`Div${id}`)
+            .addEventListener("animationend", (event) => {
+              event.preventDefault();
+              document.getElementById(id).textContent = newValue;
+              commitEditButton.replaceWith(savedAddButton);
+            });
+
+          let tempDiv = document.getElementById(`Div${id}`);
+          tempDiv.remove();
+
+          tempDiv.classList.add("animate__bounceIn");
+
+          if (document.getElementById(`Div${id + 1}`)) {
+            document
+              .getElementById("itemList")
+              .insertBefore(tempDiv, document.getElementById(`Div${id + 1}`));
+          } else {
+            document.getElementById("itemList").appendChild(tempDiv);
+          }
+        });
+      }
+
+      addCommitEditEL(id);
+    } else {
+      window.alert(
+        "You cannot make chnages to another item while editing one."
+      );
+    }
   });
 }
 
